@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from "react";
 import _ from "lodash";
 
 type GameTile = {
-  selected: boolean,
   correct: boolean,
   icon: string
 }
@@ -42,23 +41,6 @@ export default function Home() {
     setup()
   }, [])
 
-  useEffect(function() {
-    if (selected.length === 2) {
-      let state = _.cloneDeep(icons);
-      let currentSelected = _.cloneDeep(selected);
-      if (icons[selected[0]].icon !== icons[selected[1]].icon) {
-        state[selected[0]].selected = false;
-        state[selected[1]].selected = false;
-      } else {
-        state[selected[0]].correct = true;
-        state[selected[1]].correct = true;
-
-      }
-      currentSelected = [];
-      setSelected(currentSelected);
-      setIcons(state);
-    }
-  }, [selected])
 
   function setup() {
     generateIconsToUse()
@@ -75,8 +57,8 @@ export default function Home() {
 
     let iconStates: GameTile[] = [];
     for (let i = 0; i < iconsNeeded; i++) {
-      iconStates.push({ selected: false, correct: false, icon: icons[i] });
-      iconStates.push({ selected: false, correct: false, icon: icons[i] });
+      iconStates.push({ correct: false, icon: icons[i] });
+      iconStates.push({ correct: false, icon: icons[i] });
     }
     iconStates = shuffle(iconStates);
     setIcons(iconStates);
@@ -95,18 +77,31 @@ export default function Home() {
 
     if (currentSelected.includes(index)) {
       currentSelected.splice(currentSelected.indexOf(index), 1);
+    } else if (isAMatch(state, currentSelected, index)) {
+      state[index].correct = true;
+      state[currentSelected[0]].correct = true;
+      currentSelected = [];
+    } else if (currentSelected.length === 2) {
+      currentSelected = [];
+      currentSelected.push(index);
     } else {
       currentSelected.push(index);
     }
 
-    state[index].selected = !state[index].selected
-
-    setSelected(currentSelected);
     setIcons(state);
+    setSelected(currentSelected);
+  }
+
+  function isAMatch(state: GameTile[], currentSelected: number[], index: number) {
+    return currentSelected.length === 1 && state[index].icon === state[currentSelected[0]].icon
+  }
+
+  function isSelected(index: number) {
+    return icons[index].correct || selected.includes(index);
   }
 
   function getIconUsed(index: number) {
-    if (icons[index].correct || icons[index].selected) {
+    if (isSelected(index)) {
       return icons[index].icon;
     }
     return "";
@@ -117,7 +112,11 @@ export default function Home() {
       return <div className="flex flex-row" key={i}>
         {
           Array.from(Array(squareDimensions), (e, i2) => {
-            return <Card onClick={() => clickItem(i, i2)} key={i2} icon={getIconUsed(getIndex(i, i2))} />
+            return <Card
+              rotated={isSelected(getIndex(i, i2))}
+              onClick={() => clickItem(i, i2)}
+              key={i2}
+              icon={getIconUsed(getIndex(i, i2))} />
           })
         }
       </div>
@@ -126,7 +125,7 @@ export default function Home() {
 
   function renderCompleteText() {
     if (allCorrect) {
-      return <p>Congratulations! You've correctly completed the puzzle</p>
+      return <p>Congratulations! You&apos;ve correctly completed the puzzle</p>
     }
     return <></>
   }
