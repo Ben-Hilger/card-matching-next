@@ -33,7 +33,7 @@ body {
 }
 
 .flip-card {
-  border: 1px solid #f1f1f1;
+  border: 2px solid black;
   perspective: 1000px; /* Remove this if you don't want the 3D effect */
 }
 
@@ -49,7 +49,7 @@ body {
 }
 
 /* Do an horizontal flip when you move the mouse over the flip box container */
-.rotate-card  {
+.rotate-card {
   transform: rotateY(180deg);
 }
 
@@ -66,13 +66,13 @@ body {
 
 /* Style the front side (fallback if image is missing) */
 .flip-card-front {
-  background-color: blue;
-  color: black;
+  background-color: white;
+  color: blue;
 }
 
 /* Style the back side */
 .flip-card-back {
-  background-color: black;
+  background-color: blue;
   color: white;
   transform: rotateY(180deg);
 }
