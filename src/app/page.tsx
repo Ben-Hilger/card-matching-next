@@ -108,10 +108,10 @@ export default function Home() {
   }
 
   function generateGameBoard() {
-    return Array.from(Array(squareDimensions), (e, i) => {
+    return Array.from(Array(squareDimensions), (_e, i) => {
       return <div className="flex flex-row" key={i}>
         {
-          Array.from(Array(squareDimensions), (e, i2) => {
+          Array.from(Array(squareDimensions), (_e, i2) => {
             return <Card
               rotated={isSelected(getIndex(i, i2))}
               onClick={() => clickItem(i, i2)}
